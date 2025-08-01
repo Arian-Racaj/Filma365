@@ -33,7 +33,7 @@ function App() {
   const fetchMovies = async () => {
     try {
       const res1 = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}&page=${page}`
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}&page=${page}`
       );
       const data1 = await res1.json();
       let combined = [];
@@ -46,7 +46,7 @@ function App() {
 
         // merr edhe faqen e radhës për të plotësuar 12
         const res2 = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}&page=${
+          `https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}&page=${
             page + 1
           }`
         );
@@ -77,7 +77,7 @@ function App() {
   const handleMovieClick = async (imdbID) => {
     try {
       const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
+        `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`
       );
       const data = await res.json();
       setSelectedMovie(data);
