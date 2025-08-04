@@ -13,9 +13,11 @@ function BestFilmsCarousel({ movies, onMovieClick }) {
   // Auto-scroll effect with true sliding
   useEffect(() => {
     if (carouselMovies.length < 2) return;
+
     const interval = setInterval(() => {
       setIsAnimating(true);
-    }, 10000); // 10 seconds
+    }, 3000); // 3 seconds for faster rotation
+
     return () => clearInterval(interval);
   }, [carouselMovies]);
 
@@ -35,12 +37,12 @@ function BestFilmsCarousel({ movies, onMovieClick }) {
       });
       // Force reflow to apply the style immediately
       void ref.offsetWidth;
-      ref.style.transition = "transform 0.6s cubic-bezier(0.4,0,0.2,1)";
+      ref.style.transition = "transform 0.8s cubic-bezier(0.4,0,0.2,1)";
       setIsAnimating(false);
     };
 
     ref.addEventListener("transitionend", handleTransitionEnd, { once: true });
-    ref.style.transform = "translateX(-220px)";
+    ref.style.transform = "translateX(-200px)";
 
     return () => {
       ref.removeEventListener("transitionend", handleTransitionEnd);
@@ -73,27 +75,35 @@ function BestFilmsCarousel({ movies, onMovieClick }) {
       >
         🏆 Filmat Më të Mirë
       </h2>
+
+      {/* Carousel Container */}
       <div
         style={{
-          overflowX: "hidden",
-          padding: "20px 0",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
+          position: "relative",
+          width: "100%",
+          height: "340px",
+          overflow: "hidden",
         }}
       >
+        {/* Carousel Track */}
         <div
           ref={carouselRef}
           style={{
             display: "flex",
+            position: "absolute",
+            left: "0",
+            top: "0",
+            transition: "transform 0.8s cubic-bezier(0.4,0,0.2,1)",
             gap: "20px",
-            transition: "transform 0.6s cubic-bezier(0.4,0,0.2,1)",
           }}
         >
           {carouselMovies.map((movie, index) => (
             <div
               key={movie.imdbID + index}
               style={{
-                minWidth: "200px",
+                width: "200px",
+                height: "320px",
+                flexShrink: 0,
                 animation: `slideInUp 0.6s ease-out ${index * 0.1}s both`,
               }}
             >
@@ -108,9 +118,11 @@ function BestFilmsCarousel({ movies, onMovieClick }) {
                   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                   position: "relative",
                   overflow: "hidden",
-                  height: "320px",
+                  height: "100%",
+                  width: "100%",
                   display: "flex",
                   flexDirection: "column",
+                  boxShadow: "0 8px 25px rgba(0, 0, 0, 0.2)",
                 }}
                 onClick={() => onMovieClick(movie.imdbID)}
                 onMouseEnter={(e) => {

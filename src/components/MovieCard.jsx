@@ -1,8 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function MovieCard({ movie, onClick }) {
+  const { isAuthenticated } = useAuth0();
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Check if movie is in favorites on component mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      setIsFavorite(favorites.some((fav) => fav.imdbID === movie.imdbID));
+    }
+  }, [movie.imdbID, isAuthenticated]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -12,6 +23,54 @@ function MovieCard({ movie, onClick }) {
     e.target.src =
       "https://via.placeholder.com/200x300/667eea/ffffff?text=No+Image";
     setImageLoaded(true);
+  };
+
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation(); // Prevent triggering the card click
+
+    if (!isAuthenticated) {
+      alert("Please log in to add favorites!");
+      return;
+    }
+
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (isFavorite) {
+      // Remove from favorites
+      const updatedFavorites = favorites.filter(
+        (fav) => fav.imdbID !== movie.imdbID
+      );
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+    } else {
+      // Add to favorites
+      const updatedFavorites = [...favorites, movie];
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorite(true);
+    }
+  };
+
+  const handleCardClick = () => {
+    // Add to watch history
+    if (isAuthenticated) {
+      const history = JSON.parse(localStorage.getItem("watchHistory") || "[]");
+      const movieWithTimestamp = {
+        ...movie,
+        watchedAt: new Date().toISOString(),
+      };
+
+      // Remove if already exists and add to beginning
+      const filteredHistory = history.filter(
+        (item) => item.imdbID !== movie.imdbID
+      );
+      const updatedHistory = [movieWithTimestamp, ...filteredHistory].slice(
+        0,
+        50
+      ); // Keep last 50
+      localStorage.setItem("watchHistory", JSON.stringify(updatedHistory));
+    }
+
+    onClick(movie.imdbID);
   };
 
   return (
@@ -37,8 +96,64 @@ function MovieCard({ movie, onClick }) {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onClick(movie.imdbID)}
+      onClick={handleCardClick}
     >
+      {/* Favorite Button */}
+      <div
+        onClick={handleFavoriteClick}
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          zIndex: 10,
+          background: isAuthenticated
+            ? isFavorite
+              ? "rgba(255, 107, 107, 0.9)"
+              : "rgba(0, 0, 0, 0.7)"
+            : "rgba(0, 0, 0, 0.7)",
+          color:
+            isAuthenticated && isFavorite
+              ? "white"
+              : "rgba(255, 255, 255, 0.8)",
+          width: "32px",
+          height: "32px",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          fontSize: "14px",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+        }}
+        onMouseEnter={(e) => {
+          if (isAuthenticated) {
+            e.currentTarget.style.transform = "scale(1.1)";
+            e.currentTarget.style.background = isFavorite
+              ? "rgba(255, 107, 107, 1)"
+              : "rgba(255, 107, 107, 0.8)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.background = isAuthenticated
+            ? isFavorite
+              ? "rgba(255, 107, 107, 0.9)"
+              : "rgba(0, 0, 0, 0.7)"
+            : "rgba(0, 0, 0, 0.7)";
+        }}
+        title={
+          isAuthenticated
+            ? isFavorite
+              ? "Remove from favorites"
+              : "Add to favorites"
+            : "Login to add favorites"
+        }
+      >
+        {isAuthenticated ? (isFavorite ? "❤️" : "🤍") : "🔒"}
+      </div>
+
       {/* Glow effect on hover */}
       <div
         style={{
