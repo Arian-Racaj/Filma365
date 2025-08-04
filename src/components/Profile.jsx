@@ -550,27 +550,29 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Dropdown Menu */}
-        {isDropdownOpen && (
-          <div
-            style={{
-              position: "absolute",
-              top: "100%",
-              right: 0,
-              marginTop: "8px",
-              background: "rgba(20, 20, 20, 0.95)",
-              backdropFilter: "blur(15px)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: "12px",
-              minWidth: "280px",
-              maxWidth: "320px",
-              maxHeight: "500px",
-              overflow: "hidden",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-              zIndex: 1000,
-              animation: "slideDown 0.3s ease-out",
-            }}
-          >
+                 {/* Dropdown Menu */}
+         {isDropdownOpen && (
+           <div
+             style={{
+               position: "absolute",
+               top: "100%",
+               right: 0,
+               marginTop: "8px",
+               background: "rgba(20, 20, 20, 0.95)",
+               backdropFilter: "blur(15px)",
+               border: "1px solid rgba(255, 255, 255, 0.2)",
+               borderRadius: "12px",
+               minWidth: "280px",
+               maxWidth: "320px",
+               maxHeight: "400px",
+               overflow: "hidden",
+               boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+               zIndex: 1000,
+               animation: "slideDown 0.3s ease-out",
+               // Fallback positioning to ensure visibility
+               transform: "translateY(0)",
+             }}
+           >
             {/* Tab Navigation */}
             <div
               style={{
@@ -701,13 +703,13 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Tab Content */}
-            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-              {activeTab === "profile" && renderProfileDetails()}
-              {activeTab === "favorites" && renderFavorites()}
-              {activeTab === "history" && renderWatchHistory()}
-              {activeTab === "watchLater" && renderWatchLater()}
-            </div>
+                         {/* Tab Content */}
+             <div style={{ maxHeight: "250px", overflowY: "auto" }}>
+               {activeTab === "profile" && renderProfileDetails()}
+               {activeTab === "favorites" && renderFavorites()}
+               {activeTab === "history" && renderWatchHistory()}
+               {activeTab === "watchLater" && renderWatchLater()}
+             </div>
 
             {/* Logout Button */}
             <div
